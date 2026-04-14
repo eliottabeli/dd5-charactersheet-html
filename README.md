@@ -5,7 +5,7 @@ charactersheet.html est une fiche perso D&D5 faite pour l'impression A4, éditab
 
 _ Comment marche l'export D&D Beyond _
 * Sur la page de votre personnage, ouvrir devtool. Dans réseau, taper "pdf" et recharger la page.
-* Cliquer sur export pdf sur la fiche personnage. une requête s'affiche dans l'onglet devtool. cliquer dessus, dans header aller copier le payload  qui ressemble à {charaterid : }
+* Cliquer sur export pdf sur la fiche personnage. Une requête s'affiche dans l'onglet devtool. Cliquer dessus, dans header copier le payload (ça ressemble à {charaterid : })
 * Coller ça dans un .js dans data/characters, en précédant de window.Enveloppe( ) (prendre exemple sur les autres .js)
 * Dans source loader ajouter son fichier .js à la liste des fichiers
 * et voilà
