@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cartes de glossaire – paginé</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="cards-template-paged.css" />
+  <script src="source-loader.js"></script>
+  <script src="cards-template-paged-render.js" defer></script>
+</head>
+<body class="theme-color cards-template-body">
+  <aside class="screen-toolbar" aria-label="Options d'affichage">
+    <label><input type="checkbox" id="toggle-color" checked /> Couleurs douces</label>
+    <label><input type="checkbox" id="toggle-cutmarks" checked /> Guides de coupe</label>
+    <label><input type="checkbox" id="toggle-compact" /> Mode compact</label>
+    <button type="button" id="reset-view">Réinitialiser la vue</button>
+    <select id="source-select" aria-label="Choisir une source">
+      <option value="">Choisir une source</option>
+    </select>
+  </aside>
+
+  <main class="sheet-stack cards-sheet-stack" id="cards-pages-host">
+    <section class="page cards-page" aria-label="Cartes de glossaire">
+      <div class="page-label">Cartes · page 1</div>
+      <div class="printable cards-printable">
+        <span class="registration registration-tl" aria-hidden="true"></span>
+        <span class="registration registration-tr" aria-hidden="true"></span>
+        <span class="registration registration-bl" aria-hidden="true"></span>
+        <span class="registration registration-br" aria-hidden="true"></span>
+
+        <header class="cards-header theme-slate">
+          <div>
+            <h1 class="cards-title">Cartes de glossaire</h1>
+            <p class="cards-subtitle">
+              Version imprimable paginée. Gabarit calé sur les tokens du character sheet.
+            </p>
+          </div>
+          <div id="cards-status" class="cards-status" aria-live="polite"></div>
+        </header>
+
+        <div class="cards-cut-guides" aria-hidden="true"></div>
+        <div class="cards-grid cards-grid-page" data-page-index="0"></div>
+      </div>
+    </section>
+  </main>
+
+  <template id="cards-page-template">
+    <section class="page cards-page" aria-label="Cartes de glossaire">
+      <div class="page-label">Cartes</div>
+      <div class="printable cards-printable">
+        <span class="registration registration-tl" aria-hidden="true"></span>
+        <span class="registration registration-tr" aria-hidden="true"></span>
+        <span class="registration registration-bl" aria-hidden="true"></span>
+        <span class="registration registration-br" aria-hidden="true"></span>
+        <header class="cards-header theme-slate">
+          <div>
+            <h1 class="cards-title">Cartes de glossaire</h1>
+            <p class="cards-subtitle">
+              Version imprimable paginée. Gabarit calé sur les tokens du character sheet.
+            </p>
+          </div>
+          <div class="cards-status page-status" aria-live="polite"></div>
+        </header>
+        <div class="cards-cut-guides" aria-hidden="true"></div>
+        <div class="cards-grid cards-grid-page"></div>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    if (typeof initSourceSelector === 'function') initSourceSelector();
+  </script>
+</body>
+</html>

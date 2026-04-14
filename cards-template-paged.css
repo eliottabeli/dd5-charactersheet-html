@@ -1,0 +1,315 @@
+/* Companion stylesheet for cards template paged version.
+   Intentionally reuses the original token scale from styles.css. */
+
+.cards-template-body {
+  min-width: 220mm;
+}
+
+.cards-sheet-stack {
+  padding-top: 8mm;
+}
+
+.cards-page {
+  overflow: hidden;
+}
+
+.cards-printable {
+  position: absolute;
+}
+
+/* Real safe card footprint inside the species slot:
+   slot species = 56mm x 68mm in styles.css
+   generated card inset = 1.2mm on each side
+   usable inner card = 53.6mm x 65.6mm
+*/
+:root {
+  --cards-fit-w: calc(var(--species-w) - 2.4mm);
+  --cards-fit-h: calc(var(--species-h) - 2.4mm);
+  --cards-cols: 3;
+  --cards-rows: 3;
+  --cards-gap-x: 4.2mm;
+  --cards-gap-y: 4.2mm;
+  --cards-header-h: 20mm;
+}
+
+.cards-header {
+  position: absolute;
+  left: 3mm;
+  right: 3mm;
+  top: 3mm;
+  min-height: var(--cards-header-h);
+  border: 0.42mm solid var(--line);
+  border-radius: 2.2mm;
+  background: white;
+  padding: 7.8mm 3mm 2.2mm;
+  overflow: hidden;
+}
+
+.cards-header::before {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 0;
+  height: 6.1mm;
+  border-bottom: 0.32mm solid var(--line);
+  background: var(--slate);
+}
+
+.cards-title,
+.cards-subtitle,
+.cards-status {
+  position: relative;
+  z-index: 1;
+}
+
+.cards-title {
+  margin: 0;
+  font-size: var(--t-zone-title);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cards-subtitle {
+  margin: 1mm 0 0;
+  font-size: var(--t-body-dense);
+  line-height: 1.12;
+  color: var(--muted);
+  max-width: 108mm;
+}
+
+.cards-status {
+  position: absolute;
+  top: 7.6mm;
+  right: 3mm;
+  max-width: 70mm;
+  text-align: right;
+  font-size: var(--t-body-dense);
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.cards-grid {
+  position: absolute;
+  left: 8.5mm;
+  top: 30mm;
+  width: calc(var(--cards-cols) * var(--cards-fit-w) + (var(--cards-cols) - 1) * var(--cards-gap-x));
+  min-height: calc(var(--cards-rows) * var(--cards-fit-h) + (var(--cards-rows) - 1) * var(--cards-gap-y));
+  display: grid;
+  grid-template-columns: repeat(var(--cards-cols), var(--cards-fit-w));
+  grid-auto-rows: var(--cards-fit-h);
+  gap: var(--cards-gap-y) var(--cards-gap-x);
+  align-content: start;
+}
+
+.cards-cut-guides {
+  position: absolute;
+  left: 8.5mm;
+  top: 30mm;
+  width: calc(var(--cards-cols) * var(--cards-fit-w) + (var(--cards-cols) - 1) * var(--cards-gap-x));
+  height: calc(var(--cards-rows) * var(--cards-fit-h) + (var(--cards-rows) - 1) * var(--cards-gap-y));
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.cards-template-body.hide-cuts .cards-cut-guides { display: none; }
+
+.cards-cut-guides::before,
+.cards-cut-guides::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.cards-cut-guides::before {
+  background-image:
+    linear-gradient(
+      to right,
+      transparent var(--cards-fit-w),
+      rgba(0,0,0,0.22) var(--cards-fit-w),
+      rgba(0,0,0,0.22) calc(var(--cards-fit-w) + 0.25mm),
+      transparent calc(var(--cards-fit-w) + 0.25mm),
+      transparent calc(var(--cards-fit-w) + var(--cards-gap-x) + var(--cards-fit-w)),
+      rgba(0,0,0,0.22) calc(var(--cards-fit-w) + var(--cards-gap-x) + var(--cards-fit-w)),
+      rgba(0,0,0,0.22) calc(var(--cards-fit-w) + var(--cards-gap-x) + var(--cards-fit-w) + 0.25mm),
+      transparent calc(var(--cards-fit-w) + var(--cards-gap-x) + var(--cards-fit-w) + 0.25mm)
+    );
+}
+
+.cards-cut-guides::after {
+  background-image:
+    linear-gradient(
+      to bottom,
+      transparent var(--cards-fit-h),
+      rgba(0,0,0,0.22) var(--cards-fit-h),
+      rgba(0,0,0,0.22) calc(var(--cards-fit-h) + 0.25mm),
+      transparent calc(var(--cards-fit-h) + 0.25mm),
+      transparent calc(var(--cards-fit-h) + var(--cards-gap-y) + var(--cards-fit-h)),
+      rgba(0,0,0,0.22) calc(var(--cards-fit-h) + var(--cards-gap-y) + var(--cards-fit-h)),
+      rgba(0,0,0,0.22) calc(var(--cards-fit-h) + var(--cards-gap-y) + var(--cards-fit-h) + 0.25mm),
+      transparent calc(var(--cards-fit-h) + var(--cards-gap-y) + var(--cards-fit-h) + 0.25mm)
+    );
+}
+
+/* Important: keep the same physical footprint as the real sheet cards */
+.cards-grid .generated-card {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  /* original scale from styles.css */
+  padding: 1.6mm 1.6mm 1.4mm;
+  gap: 1mm;
+  border: 0.3mm solid var(--line);
+  border-radius: 1.6mm;
+  background: white;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Use original tokens; only relax wrapping */
+.cards-template-body .card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1mm;
+}
+
+.cards-template-body .card-title-band {
+  max-width: 100%;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: clip;
+  font-size: var(--t-body-dense);
+  line-height: 1.08;
+  padding: 0.5mm 1.2mm;
+}
+
+.cards-template-body .card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8mm 1.2mm;
+  font-size: var(--t-body-dense);
+  color: var(--muted);
+}
+
+.cards-template-body .card-meta span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25mm 0.9mm;
+  border: 0.22mm solid #c8ccd2;
+  border-radius: 999px;
+  background: var(--panel);
+  font-size: var(--t-label);
+  line-height: 1.08;
+}
+
+.cards-template-body .card-traits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8mm;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cards-template-body .card-trait {
+  padding-top: 0.6mm;
+  border-top: 0.18mm solid #e1e1e1;
+}
+
+.cards-template-body .card-trait:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.cards-template-body .card-trait strong {
+  display: block;
+  margin-bottom: 0.2mm;
+  font-size: var(--t-body-dense);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.02;
+}
+
+.cards-template-body .card-trait span,
+.cards-template-body .card-trait p {
+  display: block;
+  margin: 0.3mm 0 0;
+  font-size: var(--t-body);
+  line-height: 1.15;
+  color: #303030;
+}
+
+.cards-template-body .card-trait span:first-child { margin-top: 0; }
+
+.cards-template-body .card-footer {
+  margin-top: auto;
+  padding-top: 0.8mm;
+  border-top: 0.18mm solid #dfdfdf;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1mm;
+  font-size: var(--t-label);
+  color: var(--muted);
+}
+
+.cards-template-body .card-index,
+.cards-template-body .card-source-label {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.cards-template-body.compact-cards {
+  --cards-gap-x: 3.2mm;
+  --cards-gap-y: 3.2mm;
+}
+
+.cards-template-body.compact-cards .cards-grid .generated-card {
+  padding: 1.3mm 1.3mm 1.1mm;
+  gap: 0.6mm;
+}
+
+.cards-template-body.compact-cards .card-title-band {
+  font-size: var(--t-label);
+  line-height: 1.04;
+}
+
+.cards-template-body.compact-cards .card-meta span,
+.cards-template-body.compact-cards .card-footer {
+  font-size: 5.2pt;
+}
+
+.cards-template-body.compact-cards .card-trait strong {
+  font-size: var(--t-label);
+}
+
+.cards-template-body.compact-cards .card-trait span,
+.cards-template-body.compact-cards .card-trait p {
+  font-size: 5.3pt;
+  line-height: 1.12;
+}
+
+.cards-empty {
+  position: absolute;
+  left: 8.5mm;
+  right: 8.5mm;
+  top: 40mm;
+  padding: 4mm;
+  text-align: center;
+  border: 0.28mm dashed #9a9a9a;
+  border-radius: 2mm;
+  color: var(--muted);
+  font-size: var(--t-body-dense);
+  background: rgba(255,255,255,0.9);
+}
+
+@media print {
+  .cards-template-body {
+    min-width: auto;
+  }
+}

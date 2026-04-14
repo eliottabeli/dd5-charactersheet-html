@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fiche modulaire D&D 5.5 – EV4</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="screen-toolbar" aria-label="Options d'affichage">
+    <label><input type="checkbox" id="toggle-color" /> Couleurs douces</label>
+    <label><input type="checkbox" id="toggle-generated" checked /> Afficher les cartes générées</label>
+    <button type="button" id="reset-view">Réinitialiser la vue</button>
+    <select id="source-select">
+      <option value="">Choisir une source</option>
+    </select>
+  </aside>
+
+  <main class="sheet-stack">
+    <!-- ══════════════════════════════════════════════════
+         PAGE 1 – FICHE FINALE
+    ══════════════════════════════════════════════════ -->
+    <section class="page page-final" aria-label="EV3 fiche finale">
+      <div class="page-label">EV3 · Fiche finale</div>
+      <div class="printable">
+        <span class="registration registration-tl" aria-hidden="true"></span>
+        <span class="registration registration-tr" aria-hidden="true"></span>
+        <span class="registration registration-bl" aria-hidden="true"></span>
+        <span class="registration registration-br" aria-hidden="true"></span>
+
+        <!-- NOM -->
+        <section class="zone zone-name slot-name theme-blue">
+          <h2 class="zone-title">Personnage</h2>
+          <div class="name-banner" id="char-name">–</div>
+        </section>
+
+        <!-- DÉFENSE & SANTÉ – 5 colonnes -->
+        <section class="zone zone-health slot-health theme-red">
+          <h2 class="zone-title">Défense &amp; santé</h2>
+          <div class="health-grid">
+            <!-- Col 1: CA -->
+            <div class="health-cell health-cell-ca">
+              <span class="mini-label">CA</span>
+              <strong class="mini-value" id="health-ac">–</strong>
+            </div>
+            <!-- Col 2: PV actuels (grand espace d'écriture) -->
+            <div class="health-cell health-cell-hp">
+              <span class="mini-label">PV actuels</span>
+              <div class="mini-write"></div>
+            </div>
+            <!-- Col 3: PV temp / PV max -->
+            <div class="health-pair">
+              <div class="health-half">
+                <span class="mini-label">PV max</span>
+                <div class="mini-value" id="health-max"></div>
+              </div>
+              <div class="health-half">
+                <span class="mini-label">PV temp</span>
+                <strong class="mini-write">–</strong>
+              </div>
+            </div>
+            <!-- Col 4: Dés dépensés / Dés de vie max -->
+            <div class="health-pair">
+              <div class="health-half">
+                <span class="mini-label">Dés dépensés</span>
+                <div class="mini-write"></div>
+              </div>
+              <div class="health-half">
+                <span class="mini-label">Dés de vie</span>
+                <strong class="mini-value-sm" id="health-hitdice">–</strong>
+              </div>
+            </div>
+            <!-- Col 5: Jets de mort -->
+            <div class="health-pair">
+              <div class="health-half health-half-bubbles">
+                <span class="mini-label">✓ Succès</span>
+                <span class="death-bubbles" aria-hidden="true"><span></span><span></span><span></span></span>
+              </div>
+              <div class="health-half health-half-bubbles">
+                <span class="mini-label">✗ Échecs</span>
+                <span class="death-bubbles" aria-hidden="true"><span></span><span></span><span></span></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- APTITUDES & COMPÉTENCES (colonne gauche) -->
+        <section class="zone zone-abilities slot-abilities theme-gold">
+          <h2 class="zone-title">Aptitudes &amp; compétences</h2>
+          <div class="ability-toolbar">
+            <div class="toolbar-card">
+              <span class="toolbar-label">Bonus de maîtrise</span>
+              <strong class="toolbar-value" id="prof-bonus">–</strong>
+            </div>
+            <div class="toolbar-card toolbar-card-inspiration">
+              <span class="toolbar-label">Inspiration héroïque</span>
+              <span class="toolbar-tick" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="ability-grid" id="ability-grid"></div>
+        </section>
+
+        <!-- INITIATIVE · VITESSE · TAILLE · PERCEPTION PASSIVE -->
+        <section class="zone zone-mobility slot-mobility theme-blue">
+          <h2 class="zone-title">Mobilité</h2>
+          <div class="mobility-strip">
+            <div class="strip-card"><span>Initiative</span><strong id="mob-init">–</strong></div>
+            <div class="strip-card"><span>Vitesse</span><strong id="mob-speed">–</strong></div>
+            <div class="strip-card"><span>Taille</span><strong id="mob-size">–</strong></div>
+            <div class="strip-card"><span>Perception pass.</span><strong id="mob-passive">–</strong></div>
+          </div>
+        </section>
+
+        <!-- CLASSE (2 colonnes de capacités) -->
+        <section class="zone zone-class slot-class theme-green">
+          <h2 class="zone-title" id="class-zone-title">Classe</h2>
+          <div class="full-text-list" id="class-feature-list"></div>
+        </section>
+
+        <!-- CAPACITÉS & ACTIONS -->
+        <section class="zone zone-actions slot-actions theme-red">
+          <h2 class="zone-title">Capacités &amp; actions</h2>
+          <div class="action-list" id="action-list"></div>
+        </section>
+
+        <!-- ATTAQUES -->
+        <section class="zone zone-combat slot-combat theme-red">
+          <h2 class="zone-title">Attaques</h2>
+          <table class="attack-table">
+            <thead>
+              <tr>
+                <th>Arme / capacité</th>
+                <th>Jet d'attaque</th>
+                <th>Dégâts</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="attack-rows"></tbody>
+          </table>
+        </section>
+
+        <!-- MAÎTRISES (bas gauche) -->
+        <section class="zone zone-training slot-training theme-slate">
+          <h2 class="zone-title">Maîtrises</h2>
+          <div class="training-list" id="training-list"></div>
+        </section>
+
+        <!-- ESPÈCE (bas centre) -->
+        <section class="zone zone-species slot-species theme-purple">
+          <h2 class="zone-title">Espèce</h2>
+          <div class="card-slot species-slot">
+            <div class="generated-card card-large" id="species-card-host"></div>
+          </div>
+        </section>
+
+        <!-- DONS (bas droite) -->
+        <section class="zone zone-feats slot-feats theme-purple">
+          <h2 class="zone-title">Dons</h2>
+          <div class="card-slot feat-slot">
+            <div class="feat-stack" id="feat-stack"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         PAGE 2 – SORTS & CARNET
+    ══════════════════════════════════════════════════ -->
+    <section class="page page-ev3b" aria-label="EV3b sorts et carnet">
+      <div class="page-label">EV3b · Sorts &amp; carnet</div>
+      <div class="printable">
+      <div class="page-rotated">
+        <span class="registration registration-tl" aria-hidden="true"></span>
+        <span class="registration registration-tr" aria-hidden="true"></span>
+        <span class="registration registration-bl" aria-hidden="true"></span>
+        <span class="registration registration-br" aria-hidden="true"></span>
+
+        <!-- Lancement de sorts -->
+        <section class="zone page2-casting slot-p2-casting theme-blue">
+          <h2 class="zone-title">Lancement de sorts</h2>
+          <div class="spell-summary-grid">
+            <div class="spell-summary-card"><span>Caractéristique</span><strong id="spell-ability">–</strong></div>
+            <div class="spell-summary-card"><span>Modificateur</span><strong id="spell-mod">–</strong></div>
+            <div class="spell-summary-card"><span>DD des sorts</span><strong id="spell-dc">–</strong></div>
+            <div class="spell-summary-card"><span>Bonus d'attaque</span><strong id="spell-attack">–</strong></div>
+          </div>
+        </section>
+
+        <!-- Emplacements de sorts (seulement les niveaux disponibles) -->
+        <section class="zone page2-slots slot-p2-slots theme-blue">
+          <h2 class="zone-title">Emplacements de sorts</h2>
+          <div class="slot-grid" id="spell-slot-grid"></div>
+        </section>
+
+        <!-- Actions communes (remplace "Repères rapides") -->
+       <section class="zone page2-basicact slot-p2-basicact theme-slate">
+          <h2 class="zone-title">Bottes d'armes</h2>
+                   <div class="card-slot species-slot"></div>
+          <div class="chip-flow" id="basic-actions"></div>
+        </section>
+
+        <!-- Sorts connus / préparés -->
+        <section class="zone page2-spells slot-p2-spells theme-blue">
+          <h2 class="zone-title">Sorts connus ou préparés</h2>
+          <table class="spell-table">
+            <thead>
+              <tr>
+                <th>Niv.</th>
+                <th>Nom</th>
+                <th>Incant.</th>
+                <th>Portée</th>
+                <th>Compo.</th>
+                <th>Durée</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody id="spell-rows"></tbody>
+          </table>
+        </section>
+
+        <!-- Équipement -->
+        <section class="zone page2-equipment slot-p2-equipment theme-slate">
+          <h2 class="zone-title">Équipement détaillé</h2>
+          <table class="equip-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Qté</th>
+                <th>Poids</th>
+              </tr>
+            </thead>
+            <tbody id="equipment-rows"></tbody>
+          </table>
+        </section>
+
+        <!-- Notes & croquis -->
+        <section class="zone page2-notes slot-p2-notes theme-green">
+          <h2 class="zone-title">Notes et croquis</h2>
+          <div class="notes-prefill" id="notes-prefill"></div>
+          <div class="scribble-grid" aria-hidden="true"></div>
+        </section>
+      </div>
+     </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         CACHE 2
+    ══════════════════════════════════════════════════ -->
+    <section class="page page-cache page-cache-2" aria-label="Cache 2">
+      <div class="page-label">EV 2</div>
+      <div class="printable">
+        <span class="registration registration-tl" aria-hidden="true"></span>
+        <span class="registration registration-tr" aria-hidden="true"></span>
+        <span class="registration registration-bl" aria-hidden="true"></span>
+        <span class="registration registration-br" aria-hidden="true"></span>
+
+        <div class="cache-sheet"></div>
+
+        <div class="window-cut slot-name"></div>
+        <div class="window-cut slot-health"></div>
+        <div class="window-cut slot-abilities"></div>
+        <div class="window-cut slot-species"></div>
+        <div class="window-cut slot-feats"></div>
+
+        <div class="window-label label-name">Visible dès la phase 2</div>
+        <div class="window-label label-abilities">Visible dès la phase 2</div>
+        <div class="window-label label-species">Visible dès la phase 2</div>
+        <div class="window-label label-feats">Visible dès la phase 2</div>
+
+        <div class="cache-instructions">
+          1. Découper les cadres pointillés. 2. Garder tout le pourtour intact. 3. Poser ce cache sur EV3.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         CACHE 1
+    ══════════════════════════════════════════════════ -->
+    <section class="page page-cache page-cache-1" aria-label="Cache 1">
+      <div class="page-label">EV 1</div>
+      <div class="printable">
+        <span class="registration registration-tl" aria-hidden="true"></span>
+        <span class="registration registration-tr" aria-hidden="true"></span>
+        <span class="registration registration-bl" aria-hidden="true"></span>
+        <span class="registration registration-br" aria-hidden="true"></span>
+
+        <div class="cache-sheet"></div>
+
+        <div class="window-cut slot-name"></div>
+        <div class="window-cut slot-species"></div>
+        <div class="window-cut slot-feats"></div>
+
+        <section class="overlay-zone overlay-health slot-health theme-red">
+          <h2 class="zone-title">Défense &amp; santé simplifiées</h2>
+          <div class="phase1-health-grid">
+            <div class="phase1-number-card"><span>CA</span><strong id="phase1-ac">–</strong></div>
+            <div class="phase1-number-card"><span>PV</span><strong id="phase1-hp">–</strong></div>
+          </div>
+        </section>
+
+        <section class="overlay-zone overlay-abilities slot-abilities theme-gold">
+          <h2 class="zone-title">Aptitudes simplifiées</h2>
+          <div class="phase1-ability-grid" id="phase1-abilities"></div>
+        </section>
+
+        <div class="window-label label-name">Toujours visible</div>
+        <div class="window-label label-species">Toujours visible</div>
+        <div class="window-label label-feats">Toujours visible</div>
+
+        <div class="cache-instructions">
+          1. Découper les cadres pointillés. 2. Garder tout le pourtour intact. 3. Poser ce cache sur EV2.
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <script src="source-loader.js"></script>
+  <script>initSourceSelector()</script>
+  <script src="data/glossaries/spells.js"></script>
+  <script src="data/characters/sample-data.js"></script>
+  <script src="render.js"></script>
+</body>
+</html>

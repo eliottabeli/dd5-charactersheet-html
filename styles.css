@@ -1,0 +1,1003 @@
+/* ═══════════════════════════════════════════════════════════════
+   TYPOGRAPHY SCALE  ← tweak these to resize text globally
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --t-name:        17pt;   /* character name banner */
+  --t-zone-title:   7.5pt; /* zone header labels */
+  --t-section:      6.5pt; /* subheadings inside zones */
+  --t-label:        7.5pt; /* field labels (CA, PV…) */
+  --t-body:         9pt; /* feature text, descriptions */
+  --t-body-dense:   8.5pt; /* compact table / chip text */
+  --t-value-lg:    12pt;   /* big numbers: ability mod, HP */
+  --t-value-md:     10pt;   /* medium numbers */
+  --t-value-sm:     8pt;   /* small values */
+  --t-skill-mod:    9pt;   /* modifier in skill lines */
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --paper-w: 210mm;
+  --paper-h: 297mm;
+  --page-margin: 6mm;
+  --print-w: 198mm;
+  --print-h: 285mm;
+  --ink: #141414;
+  --line: #202020;
+  --muted: #585858;
+  --paper: #ffffff;
+  --panel: #f7f7f7;
+  --panel-2: #fbfbfb;
+  --mask: #dddddd;
+  --mask-ink: #555555;
+  --cut: 0.36mm dashed #555555;
+  --shadow: 0 3mm 10mm rgba(0, 0, 0, 0.14);
+
+  --blue:   #edf4ff;
+  --gold:   #fff5df;
+  --red:    #fff0f0;
+  --green:  #eef8ec;
+  --purple: #f7efff;
+  --slate:  #f1f3f7;
+
+  /* ── Page 1 slot positions ── */
+--name-x: 3mm;   --name-y: 3mm;   --name-w: 52mm;  --name-h: 28mm;
+
+--health-x: 57mm; --health-y: 3mm; --health-w: 138mm; --health-h: 28mm;
+
+/* Mobility moved into left column (between name and abilities) */
+--mobility-x: 3mm;  --mobility-y: 33mm; --mobility-w: 68mm; --mobility-h: 20mm;
+
+/* Abilities (competence) pushed down */
+--abilities-x: 3mm; --abilities-y: 54mm; --abilities-w: 68mm; --abilities-h: 147mm;
+
+/* Right column moved up to use freed space */
+--class-x:    74mm; --class-y:   33mm; --class-w: 121mm; --class-h: 52mm;
+
+--actions-x:  74mm; --actions-y:  86mm; --actions-w: 121mm; --actions-h: 81mm;
+
+--combat-x:   74mm; --combat-y: 168mm; --combat-w: 121mm; --combat-h: 33mm;
+
+/* Bottom row unchanged */
+--training-x: 3mm;   --training-y: 202mm; --training-w: 68mm;  --training-h: 68mm;
+
+--species-x:  74mm;  --species-y: 202mm; --species-w: 56mm;  --species-h: 68mm;
+
+--feats-x:    133mm; --feats-y: 202mm; --feats-w: 62mm;  --feats-h: 68mm;
+
+/* ── Page 2 slot positions ── */
+--p2-casting-x: 3mm;   --p2-casting-y: 3mm;  --p2-casting-w: 60mm;  --p2-casting-h: 32mm;
+--p2-slots-x:   64mm;  --p2-slots-y:   3mm;  --p2-slots-w:   64mm;  --p2-slots-h:   32mm;
+--p2-basicact-x: 3mm; --p2-basicact-y: 118mm; --p2-basicact-w: 278mm; --p2-basicact-h: 58mm;
+--p2-equipment-x: 300mm; --p2-equipment-y: 44mm; --p2-equipment-w: 61mm; --p2-equipment-h: 102mm;
+--p2-spells-x:  3mm;   --p2-spells-y:  38mm; --p2-spells-w:  278mm; --p2-spells-h:  78mm;
+--p2-notes-x: 134mm; --p2-notes-y: 149mm; --p2-notes-w: 61mm; --p2-notes-h: 133mm;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET / BASE
+   ═══════════════════════════════════════════════════════════════ */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #d6d6d6;
+  color: var(--ink);
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* color toggle off → force white on all tinted elements */
+body:not(.theme-color) .theme-blue::before,
+body:not(.theme-color) .theme-gold::before,
+body:not(.theme-color) .theme-red::before,
+body:not(.theme-color) .theme-green::before,
+body:not(.theme-color) .theme-purple::before,
+body:not(.theme-color) .theme-slate::before,
+body:not(.theme-color) .generated-card,
+body:not(.theme-color) .template-card,
+body:not(.theme-color) .card-title-band,
+body:not(.theme-color) .feat-card-title,
+body:not(.theme-color) .toolbar-card,
+body:not(.theme-color) .strip-card,
+body:not(.theme-color) .health-cell,
+body:not(.theme-color) .health-half,
+body:not(.theme-color) .ability-card,
+body:not(.theme-color) .slot-badge,
+body:not(.theme-color) .spell-summary-card,
+body:not(.theme-color) .training-group,
+body:not(.theme-color) .phase1-number-card,
+body:not(.theme-color) .phase1-ability-card {
+  background: white !important;
+}
+
+.page-rotated {
+  position: absolute;
+  left: 0;
+  top: var(--print-h);
+  width: var(--print-h);
+  height: var(--print-w);
+  transform: rotate(-90deg);
+  transform-origin: top left;
+}
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN TOOLBAR
+   ═══════════════════════════════════════════════════════════════ */
+.screen-toolbar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; flex-wrap: wrap; gap: 10px 18px;
+  align-items: center; justify-content: center;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.95);
+  border-bottom: 1px solid #c7c7c7;
+  backdrop-filter: blur(6px);
+  font-size: 14px;
+}
+.screen-toolbar label { display: inline-flex; gap: 7px; align-items: center; }
+.screen-toolbar button {
+  border: 1px solid #666; background: white;
+  border-radius: 999px; padding: 7px 12px;
+  font: inherit; cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE SHELL
+   ═══════════════════════════════════════════════════════════════ */
+.sheet-stack {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10mm; padding: 10mm 0 16mm;
+}
+.page {
+  position: relative;
+  width: var(--paper-w); height: var(--paper-h);
+  background: white; box-shadow: var(--shadow); overflow: hidden;
+}
+.printable {
+  position: absolute;
+  left: var(--page-margin); top: var(--page-margin);
+  width: var(--print-w); height: var(--print-h);
+}
+.page-label {
+  position: absolute; top: 3mm; right: 6mm;
+  font-size: 8pt; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #666;
+}
+
+/* registration marks */
+.registration { position: absolute; width: 5mm; height: 5mm; z-index: 40; }
+.registration::before, .registration::after { content: ""; position: absolute; background: var(--ink); }
+.registration::before { left: 50%; top: 0; width: 0.28mm; height: 5mm; transform: translateX(-50%); }
+.registration::after  { left: 0; top: 50%; width: 5mm; height: 0.28mm; transform: translateY(-50%); }
+.registration-tl { left: -2.5mm; top: -2.5mm; }
+.registration-tr { right: -2.5mm; top: -2.5mm; }
+.registration-bl { left: -2.5mm; bottom: -2.5mm; }
+.registration-br { right: -2.5mm; bottom: -2.5mm; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SLOT POSITIONS
+   ═══════════════════════════════════════════════════════════════ */
+.zone, .overlay-zone, .window-cut { position: absolute; }
+
+.slot-name      { left: var(--name-x);      top: var(--name-y);      width: var(--name-w);      height: var(--name-h); }
+.slot-health    { left: var(--health-x);    top: var(--health-y);    width: var(--health-w);    height: var(--health-h); }
+.slot-abilities { left: var(--abilities-x); top: var(--abilities-y); width: var(--abilities-w); height: var(--abilities-h); }
+.slot-mobility  { left: var(--mobility-x);  top: var(--mobility-y);  width: var(--mobility-w);  height: var(--mobility-h); }
+.slot-class     { left: var(--class-x);     top: var(--class-y);     width: var(--class-w);     height: var(--class-h); }
+.slot-actions   { left: var(--actions-x);   top: var(--actions-y);   width: var(--actions-w);   height: var(--actions-h); }
+.slot-combat    { left: var(--combat-x);    top: var(--combat-y);    width: var(--combat-w);    height: var(--combat-h); }
+.slot-training  { left: var(--training-x);  top: var(--training-y);  width: var(--training-w);  height: var(--training-h); }
+.slot-species   { left: var(--species-x);   top: var(--species-y);   width: var(--species-w);   height: var(--species-h); }
+.slot-feats     { left: var(--feats-x);     top: var(--feats-y);     width: var(--feats-w);     height: var(--feats-h); }
+
+.slot-p2-casting   { left: var(--p2-casting-x);   top: var(--p2-casting-y);   width: var(--p2-casting-w);   height: var(--p2-casting-h); }
+.slot-p2-slots     { left: var(--p2-slots-x);     top: var(--p2-slots-y);     width: var(--p2-slots-w);     height: var(--p2-slots-h); }
+.slot-p2-basicact  { left: var(--p2-basicact-x);  top: var(--p2-basicact-y);  width: var(--p2-basicact-w);  height: var(--p2-basicact-h); }
+.slot-p2-spells    { left: var(--p2-spells-x);    top: var(--p2-spells-y);    width: var(--p2-spells-w);    height: var(--p2-spells-h); }
+.slot-p2-equipment { left: var(--p2-equipment-x); top: var(--p2-equipment-y); width: var(--p2-equipment-w); height: var(--p2-equipment-h); }
+.slot-p2-notes     { left: var(--p2-notes-x);     top: var(--p2-notes-y);     width: var(--p2-notes-w);     height: var(--p2-notes-h); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ZONE BASE STYLE (border, header band, padding)
+   ═══════════════════════════════════════════════════════════════ */
+.zone, .overlay-zone {
+  border: 0.42mm solid var(--line);
+  border-radius: 2.2mm;
+  background: white;
+  padding: 7.8mm 2.4mm 2.2mm;
+  overflow: hidden;
+}
+.zone::before, .overlay-zone::before {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 0;
+  height: 6.1mm;
+  border-bottom: 0.32mm solid var(--line);
+  background: var(--panel);
+}
+.theme-blue::before   { background: var(--blue); }
+.theme-gold::before   { background: var(--gold); }
+.theme-red::before    { background: var(--red); }
+.theme-green::before  { background: var(--green); }
+.theme-purple::before { background: var(--purple); }
+.theme-slate::before  { background: var(--slate); }
+
+.zone-title {
+  position: absolute; top: 1.45mm; left: 2.3mm; right: 2.3mm;
+  margin: 0;
+  font-size: var(--t-zone-title);
+  font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; z-index: 2;
+}
+
+/* shared uppercase / letter-spacing on secondary labels */
+.subhead, .small-subhead, .toolbar-label, .mini-label, .ability-label,
+.training-group strong, .card-title-band, .slot-hint,
+.spell-table th, .equip-table th,
+.cache-header, .cache-instructions, .window-label,
+.feature-item strong, .scribble-caption, .action-type-badge {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAME BANNER
+   ═══════════════════════════════════════════════════════════════ */
+.name-banner {
+  height: 100%;
+  display: flex; align-items: center;
+  font-size: var(--t-name); font-weight: 800; line-height: 1;
+  border-bottom: 0.35mm solid #3d3d3d;
+  padding-bottom: 1mm;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEALTH ZONE – 5-column grid
+   ═══════════════════════════════════════════════════════════════ */
+.health-grid {
+  display: grid;
+  /* CA fixed | current HP wider | 3 pair columns equal */
+  grid-template-columns: 20mm 26mm 1fr 1fr 1fr;
+  gap: 1.5mm;
+  height: 100%;
+  min-height: 0;
+  flex: 0 1 auto;
+
+}
+/* single-row tall cells */
+.health-cell {
+  border: 0.34mm solid var(--line);
+  border-radius: 1.7mm;
+  background: var(--panel-2);
+  padding: 1.2mm 1.4mm;
+  display: flex; flex-direction: column; justify-content: center; gap: 0.8mm;
+}
+.health-cell-ca { text-align: center; align-items: center; }
+.health-cell-hp { /* large current-hp write area */ }
+/* two-row stacked cells */
+.health-pair {
+  display: flex; flex-direction: column; gap: 1mm;
+}
+.health-half {
+  flex: 0 1 auto;
+  border: 0.34mm solid var(--line);
+  border-radius: 1.4mm;
+  background: var(--panel-2);
+  padding: 0.7mm 1.2mm;
+  display: flex; flex-direction: column; justify-content: center; gap: 0.3mm;
+}
+.health-half-bubbles { flex-direction: column; align-items: flex-start; gap: 0.5mm; }
+
+.mini-label {
+  font-size: var(--t-value-sm); font-weight: 700; color: var(--muted);
+}
+.mini-value {
+  font-size: var(--t-value-md); font-weight: 800; line-height: 1;
+}
+.mini-value-sm { font-size: var(--t-value-sm); font-weight: 800; line-height: 0.5; }
+/* write lines */
+.mini-write {
+  display: flex;
+  border-bottom: 0.28mm solid #444;
+}
+/* death save bubbles */
+.death-bubbles { display: inline-flex; gap: 1mm; align-items: center; }
+.death-bubbles span {
+  width: 2.8mm; height: 2.8mm;
+  border: 0.3mm solid #333; border-radius: 50%;
+  display: inline-block; cursor: pointer; transition: background 0.15s;
+}
+.death-bubbles span.bubble-filled { background: var(--ink); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ABILITY / PROFICIENCY TOOLBAR
+   ═══════════════════════════════════════════════════════════════ */
+.ability-toolbar {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.6mm; margin-bottom: 1.7mm;
+}
+.toolbar-card {
+  min-height: 10mm; padding: 1.2mm 1.5mm;
+  display: flex; flex-direction: column; justify-content: center; gap: 0.7mm;
+  border: 0.34mm solid var(--line); border-radius: 1.7mm; background: var(--panel-2);
+}
+.toolbar-label { font-size: var(--t-label); font-weight: 700; color: var(--muted); }
+.toolbar-value { font-size: var(--t-value-md); font-weight: 800; line-height: 1; }
+.toolbar-card-inspiration { flex-direction: row; align-items: center; justify-content: space-between; }
+.toolbar-tick {
+  width: 5.8mm; height: 5.8mm; border: 0.34mm solid #222;
+  border-radius: 1mm; display: inline-block; background: white;
+  cursor: pointer; transition: background 0.15s;
+}
+.toolbar-tick.is-checked { background: var(--ink); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ABILITY CARDS
+   ═══════════════════════════════════════════════════════════════ */
+.ability-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5mm;
+}
+.ability-card {
+  border: 0.34mm solid var(--line); border-radius: 1.7mm; background: var(--panel-2);
+  padding: 1.2mm 1.2mm 1.4mm;
+  min-height: 40mm;
+  display: flex; flex-direction: column; gap: 0.7mm;
+}
+/* header: LABEL | modifier (BIG) | score (small) */
+.ability-card-header {
+  display: grid; grid-template-columns: 1fr auto auto;
+  gap: 1.2mm; align-items: baseline;
+}
+.ability-label { font-size: var(--t-label); font-weight: 800; }
+.ability-mod   { font-size: var(--t-value-lg); font-weight: 800; line-height: 1; }
+.ability-score { font-size: var(--t-label); font-weight: 700; color: var(--muted); }
+
+/* save row: "Sauvegarde" | badge | value */
+.ability-save {
+  display: grid; grid-template-columns: 1fr auto auto;
+  gap: 1mm; align-items: center;
+  padding-top: 0.5mm; padding-bottom: 0.5mm;
+  border-top: 0.24mm solid #d0d0d0; border-bottom: 0.24mm solid #d0d0d0;
+  font-size: var(--t-body-dense); font-weight: 700; color: var(--muted);
+}
+.ability-save-value { font-size: var(--t-body); font-weight: 800; color: var(--ink); }
+
+/* skill lines: modifier (BIG) | badge | name */
+.skill-line {
+  display: grid; grid-template-columns: 4mm 3.2mm 1fr;
+  gap: 0.8mm; align-items: center;   justify-items: start;
+}
+.skill-mod {
+  font-size: var(--t-skill-mod); font-weight: 800;
+  text-align: right; line-height: 1;
+  color: var(--ink);
+}
+.skill-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 3mm; height: 3mm;
+  border: 0.24mm solid #333; border-radius: 50%;
+  font-size: 4.5pt; font-weight: 800;
+  cursor: pointer; user-select: none; transition: background 0.1s;
+}
+.skill-mark:not(:empty) { background: #e8e8e8; }
+.skill-name { font-size: var(--t-body-dense); min-width: 0; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILITY STRIP
+   ═══════════════════════════════════════════════════════════════ */
+.mobility-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4mm;
+  height: 100%;
+}
+
+.strip-card {
+  border: 0.34mm solid var(--line);
+  border-radius: 1.7mm;
+  background: var(--panel-2);
+
+  padding: 0.6mm 0.8mm;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  gap: 0.2mm;
+  min-width: 0;
+}
+
+.strip-card span {
+  font-size: var(--t-label);
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.strip-card strong {
+  font-size: var(--t-value-sm);
+  font-weight: 800;
+  word-break: break-word;
+  line-height: 1;
+}
+/* ═══════════════════════════════════════════════════════════════
+   CLASS SECTION – 2-column feature grid, tight spacing
+   ═══════════════════════════════════════════════════════════════ */
+.full-text-list {
+  column-count: 2;
+  column-gap: 1.2mm;
+}
+
+.feature-item {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.7mm;
+  padding: 0.7mm 0.9mm;
+
+  background: white;
+  box-shadow: 0 0 0 0.3mm #d8d8d8;
+
+  break-inside: avoid;
+}
+
+.feature-item strong {
+  display: block; font-size: var(--t-body-dense);
+  font-weight: 800; margin-bottom: 0.2mm; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.feature-item span {
+  font-size: var(--t-body-dense); line-height: 1; color: #3a3a3a; margin-bottom: 0.9mm;
+  display: block;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACTIONS / CAPACITÉS SECTION
+   ═══════════════════════════════════════════════════════════════ */
+.subhead {
+  font-size: var(--t-section);
+  font-weight: 800;
+  color: var(--muted);
+  margin-bottom: 1mm;
+}
+
+.small-subhead {
+  font-size: var(--t-label);
+  font-weight: 800;
+  color: var(--muted);
+  margin-bottom: 0.8mm;
+}
+
+/* ===== ACTION LIST (FIXED) ===== */
+.action-list {
+  column-count: 2;
+  column-gap: 1.2mm;
+
+  /* IMPORTANT: prevents column starvation */
+  column-fill: balance;
+
+  overflow: visible;
+}
+
+.action-item {
+  display: block;
+  width: 100%;
+
+  margin: 0.35mm 0;
+
+  border: 0.22mm solid #d8d8d8;
+  border-radius: 1.4mm;
+  padding: 0.6mm 0.85mm;
+  background: white;
+
+  /* critical for stable column flow */
+  break-inside: avoid;
+  page-break-inside: avoid;
+
+  line-height: 1.1;
+}
+
+/* ===== INTERNAL LAYOUT (NO FLEX) ===== */
+.action-item-title {
+  display: flex;
+  margin-bottom: 0.4mm;
+  text-transform: uppercase;
+}
+
+/* badge stays inline but not flex-dependent */
+.action-type-badge {
+  display: inline-block;
+  font-size: 4.5pt;
+  font-weight: 800;
+  padding: 0.2mm 1.1mm;
+  border: 0.24mm solid currentColor;
+  border-radius: 999px;
+  white-space: nowrap;
+  margin-bottom: 0.3mm;
+}
+
+/* type badge colors */
+.badge-action    { color: #a33030; background: #fff0f0; }
+.badge-bonus     { color: #3060aa; background: #edf4ff; }
+.badge-reaction  { color: #226644; background: #eef8ec; }
+.badge-sort      { color: #6630a3; background: #f7efff; }
+.badge-other     { color: #555; background: var(--panel); }
+
+.action-item-body {
+  display: block;
+}
+
+/* compact but readable hierarchy */
+.action-item-name {
+  font-size: var(--t-body-dense);
+  font-weight: 800;
+  display: block;
+}
+
+.action-item-desc {
+  font-size: var(--t-body-dense);
+  color: var(--muted);
+  display: block;
+  line-height: 1.1;
+}
+
+.action-item-desc::before {
+  content: " – ";
+}
+
+.basic-actions-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 3px;
+  }
+/* ===== compact fallback items ===== */
+.compact-item {
+  border: 0.22mm solid #d8d8d8;
+  border-radius: 1.4mm;
+  padding: 0.65mm 0.85mm;
+  background: white;
+}
+
+.compact-item strong {
+  display: block;
+  font-size: var(--t-body-dense);
+  font-weight: 800;
+  margin-bottom: 0.2mm;
+}
+
+.compact-item span {
+  font-size: var(--t-body-dense);
+  line-height: 1.1;
+  color: #3a3a3a;
+}
+
+.empty-note {
+  color: #8d8d8d;
+  font-size: var(--t-body-dense);
+}
+/* ═══════════════════════════════════════════════════════════════
+   ATTACK TABLE
+   ═══════════════════════════════════════════════════════════════ */
+.attack-table,
+.spell-table,
+.equip-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+/* header: keep compact but visible */
+.attack-table th,
+.spell-table th,
+.equip-table th {
+  font-size: 4.8pt;
+  font-weight: 800;
+  text-align: left;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+
+  padding: 0.45mm 0.6mm;
+  line-height: 1;
+
+  border-bottom: 0.35mm solid #b8b8b8;
+  white-space: nowrap;
+}
+
+/* rows: restore separation */
+.attack-table td,
+.spell-table td,
+.equip-table td {
+  font-size: var(--t-body-dense);
+  line-height: 1.1;
+
+  padding: 0.55mm 0.6mm;
+  vertical-align: middle;
+
+  border-bottom: 0.18mm solid #e0e0e0;
+}
+
+/* restore bold hierarchy */
+.attack-table td strong,
+.spell-table td strong,
+.equip-table td strong {
+  font-weight: 800;
+}
+
+/* keep key numeric columns readable */
+.attack-table td:nth-child(2),
+.attack-table td:nth-child(3) {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.spell-table td:nth-child(2),
+.spell-table td:nth-child(3) {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CHIP FLOW (common actions)
+   ═══════════════════════════════════════════════════════════════ */
+.chip-flow { display: flex; flex-wrap: wrap; gap: 0.8mm; }
+.chip {
+  border: 0.22mm solid #9a9a9a; border-radius: 999px;
+  padding: 0.5mm 1.4mm;
+  font-size: var(--t-body-dense); background: white;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TRAINING / PROFICIENCIES
+   ═══════════════════════════════════════════════════════════════ */
+.training-list { display: flex; flex-direction: column; gap: 1mm; }
+.training-group {
+  border: 0.34mm solid var(--line); border-radius: 1.7mm; background: var(--panel-2);
+  padding: 1mm 1.3mm;
+}
+.training-group strong {
+  display: block;
+  font-size: var(--t-body-dense); font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+  margin-bottom: 0.4mm;
+}
+.training-group span { display: block; font-size: var(--t-body-dense); line-height: 1.15; }
+
+/* CARD SLOT */
+.card-slot {
+  position: relative;
+  height: 100%;
+  border: 0.3mm dashed #8d8d8d;
+  border-radius: 1.6mm;
+  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(250,250,250,0.78));
+}
+
+/* hint */
+.slot-hint {
+  position: absolute;
+  left: 1.2mm;
+  right: 1.2mm;
+  bottom: 1.6mm;
+  text-align: center;
+  font-size: var(--t-body-dense);
+  font-weight: 700;
+  color: #8c8c8c;
+}
+
+/* SINGLE CARD */
+.generated-card {
+  position: absolute;
+  inset: 1.2mm 1.2mm 1.2mm; /* unified spacing */
+  padding: 1.6mm 1.6mm 1.4mm;
+  background: white;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1mm;
+
+  border: 0.3mm solid var(--line);
+  border-radius: 1.6mm;
+}
+
+.generated-card.is-hidden { display: none; }
+
+/* FEAT STACK */
+.feat-stack {
+  position: absolute;
+  inset: 1.2mm 1.2mm 1.2mm; /* match generated-card */
+}
+
+/* FEAT CARD */
+.feat-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+
+  border: 0.3mm solid var(--line);
+  border-radius: 1.6mm;
+  background: white;
+
+  padding: 1.4mm 1.5mm 1.2mm;
+  box-shadow: 0 0.4mm 0 rgba(0,0,0,0.03);
+}
+
+.feat-card.is-hidden { display: none !important; }
+
+/* HEADER */
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1mm;
+}
+
+/* TITLE */
+.card-title-band,
+.feat-card-title {
+  display: inline-block;
+  padding: 0.5mm 1.2mm;
+  border: 0.25mm solid #333;
+  border-radius: 999px;
+  font-size: var(--t-body-dense);
+  font-weight: 800;
+  background: var(--panel);
+
+  max-width: calc(100% - 13mm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* REMOVE BUTTON */
+.card-remove {
+  appearance: none;
+  border: 0.24mm solid #777;
+  background: white;
+  border-radius: 999px;
+  padding: 0.2mm 1.1mm 0.35mm;
+  font-size: 7.5pt;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.feat-card .card-remove {
+  position: absolute;
+  top: 1mm;
+  right: 1mm;
+}
+
+/* META + BODY */
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8mm 1.6mm;
+  font-size: var(--t-body-dense);
+  color: var(--muted);
+}
+
+.card-traits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8mm;
+}
+
+.card-trait strong {
+  display: block;
+  font-size: var(--t-body-dense);
+  font-weight: 800;
+}
+
+.card-trait span {
+  display: block;
+  font-size: var(--t-body-dense);
+  line-height: 1.15;
+}
+
+.feat-card-body {
+  margin-top: 1.2mm;
+  font-size: var(--t-body-dense);
+  line-height: 1.15;
+}
+
+/* EMPTY STATE */
+.feat-stack-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--t-body-dense);
+  color: #8a8a8a;
+  padding: 0 3mm;
+}
+/* ═══════════════════════════════════════════════════════════════
+   PAGE 2 – SPELL SUMMARY / SLOTS
+   ═══════════════════════════════════════════════════════════════ */
+.spell-summary-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2mm;
+}
+.spell-summary-card {
+  min-height: 8mm; padding: 1.1mm 1.2mm;
+  display: flex; flex-direction: column; justify-content: center; gap: 0.4mm;
+  border: 0.34mm solid var(--line); border-radius: 1.7mm; background: var(--panel-2);
+}
+.spell-summary-card span { font-size: var(--t-label); font-weight: 700; color: var(--muted); text-transform: uppercase; }
+.spell-summary-card strong { font-size: var(--t-value-md); font-weight: 800; line-height: 1; }
+
+.slot-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.4mm;
+}
+.slot-badge {
+  min-height: 8mm; padding: 1mm 1.1mm;
+  display: flex; flex-direction: column; gap: 0.5mm;
+  border: 0.34mm solid var(--line); border-radius: 1.7mm; background: var(--panel-2);
+}
+.slot-badge-top { display: flex; justify-content: space-between; gap: 0.8mm; font-size: var(--t-label); font-weight: 800; }
+.slot-badge-bottom { display: flex; gap: 0.6mm; flex-wrap: wrap; }
+.slot-dot { width: 2.1mm; height: 2.1mm; border-radius: 50%; border: 0.28mm solid #333; display: inline-block; }
+
+/* spell / equip tables */
+.spell-table thead th { position: sticky; top: 0; background: white; }
+.spell-table td { height: 7.4mm; font-size: var(--t-body-dense); }
+.spell-table td:nth-child(1) { width: 9mm; text-align: center; }
+.spell-table td:nth-child(3), .spell-table td:nth-child(4),
+.spell-table td:nth-child(5), .spell-table td:nth-child(6) { width: 15mm; }
+.equip-table td { height: 6.4mm; font-size: var(--t-body-dense); }
+.equip-table td:nth-child(2), .equip-table td:nth-child(3) { width: 11mm; text-align: center; }
+
+/* notes + scribble */
+.notes-prefill {
+  height: calc(100% - 12mm); overflow-y: auto;
+  padding-bottom: 1.2mm; border-bottom: 0.24mm solid #b9b9b9;
+  word-break: break-word; font-size: var(--t-body-dense);
+}
+.scribble-grid {
+  position: absolute; left: 2.4mm; right: 2.4mm; top: 40mm; bottom: 2.4mm;
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.08) 0.2mm, transparent 0.2mm),
+    linear-gradient(to bottom, rgba(0,0,0,0.08) 0.2mm, transparent 0.2mm);
+  background-size: 5mm 5mm; opacity: 0.6; pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CACHE PAGES
+   ═══════════════════════════════════════════════════════════════ */
+.cache-sheet {
+  position: absolute; inset: 0;
+  border: 0.42mm solid var(--line); border-radius: 2.2mm;
+  background: linear-gradient(180deg, #efefef, #dbdbdb);
+}
+.cache-header {
+  position: absolute; left: 3mm; right: 3mm; top: 3mm;
+  border: 0.32mm solid var(--line); border-radius: 1.8mm;
+  padding: 1.2mm 2mm; font-size: var(--t-body-dense); font-weight: 700;
+  background: rgba(255,255,255,0.72); z-index: 5;
+  display: flex; justify-content: space-between; gap: 2mm;
+}
+.window-cut { border: var(--cut); border-radius: 2.2mm; background: rgba(255,255,255,0.45); z-index: 4; }
+.window-label {
+  position: absolute; z-index: 5;
+  font-size: var(--t-body-dense); font-weight: 800;
+  padding: 0.7mm 1.2mm; border: 0.24mm solid #666;
+  border-radius: 999px; background: rgba(255,255,255,0.82);
+}
+.label-name      { left: calc(var(--name-x)      + 1.6mm); top: calc(var(--name-y)      + 1.6mm); }
+.label-abilities { left: calc(var(--abilities-x)  + 2mm);   top: calc(var(--abilities-y)  + 2mm); }
+.label-species   { left: calc(var(--species-x)    + 1.6mm); top: calc(var(--species-y)    + 1.6mm); }
+.label-feats     { left: calc(var(--feats-x)      + 1.6mm); top: calc(var(--feats-y)      + 1.6mm); }
+.cache-instructions {
+  position: absolute; left: 3mm; right: 3mm; bottom: 3mm;
+  border: 0.28mm solid #666; border-radius: 1.6mm;
+  padding: 1.1mm 1.5mm; font-size: var(--t-body-dense); font-weight: 700;
+  background: rgba(255,255,255,0.82); z-index: 5;
+}
+.overlay-zone { z-index: 4; }
+.phase1-health-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5mm; height: 100%; }
+.phase1-number-card {
+  border: 0.34mm solid var(--line); border-radius: 1.7mm; background: var(--panel-2);
+  padding: 1.8mm 1.4mm;
+  display: flex; flex-direction: column; justify-content: center; gap: 0.8mm; text-align: center;
+}
+.phase1-number-card span { font-size: var(--t-label); font-weight: 700; text-transform: uppercase; color: var(--muted); }
+.phase1-number-card strong { font-size: var(--t-value-md); font-weight: 800; line-height: 1; }
+.phase1-ability-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4mm; }
+.phase1-ability-card {
+  border: 0.34mm solid var(--line); border-radius: 1.7mm; background: var(--panel-2);
+  padding: 1.4mm 1.2mm; text-align: center;
+}
+.phase1-ability-card span {
+  display: block; font-size: var(--t-body-dense); font-weight: 800; margin-bottom: 0.7mm; text-transform: uppercase;
+}
+.phase1-ability-card strong { font-size: var(--t-value-md); font-weight: 800; line-height: 1; }
+
+/* ═══════════════════════════════════════════════════════════════
+   VISIBILITY
+   ═══════════════════════════════════════════════════════════════ */
+.removable-hidden .generated-card,
+.removable-hidden .feat-card { display: none !important; }
+.removable-hidden .slot-hint { display: block; }
+
+/* ═══════════════════════════════════════════════════════════════
+   TEMPLATE CARDS
+   ═══════════════════════════════════════════════════════════════ */
+.template-page-title { position: absolute; left: 6mm; top: 3mm; font-size: 8.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+.template-grid { position: absolute; left: 6mm; right: 6mm; top: 12mm; bottom: 8mm; display: grid; gap: 4mm; }
+.template-grid-species  { grid-template-columns: repeat(3, 50mm); grid-auto-rows: 70mm; justify-content: center; }
+.template-grid-feats    { grid-template-columns: repeat(3, 54mm); grid-auto-rows: 32mm; justify-content: center; }
+
+/* In a template grid, cards must be normal-flow items, not absolutely positioned */
+.template-grid .generated-card {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.template-card { position: relative; padding: 6mm 3mm 3mm; border-style: dashed;
+  border: 0.34mm solid var(--line); border-radius: 1.7mm; background: var(--panel-2); }
+.template-card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5mm; background: var(--panel); border-bottom: 0.24mm solid var(--line); }
+.template-card h3 { position: absolute; top: 1.1mm; left: 3mm; right: 3mm; margin: 0; font-size: var(--t-body-dense); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+.template-rule, .template-rows div { border-bottom: 0.22mm solid #b6b6b6; min-height: 6mm; font-size: var(--t-body-dense); color: #8a8a8a; display: flex; align-items: center; padding: 0 0.6mm; }
+.template-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1mm; margin: 1mm 0; }
+.template-mini-grid div { border-bottom: 0.22mm solid #b6b6b6; min-height: 5mm; font-size: var(--t-body-dense); color: #8a8a8a; display: flex; align-items: center; padding: 0 0.6mm; }
+.template-rows { display: flex; flex-direction: column; gap: 0.8mm; }
+.template-feat-lines { display: flex; flex-direction: column; gap: 0.8mm; margin-top: 1mm; }
+.template-feat-lines div { min-height: 5.3mm; }
+
+/* ═══════════════════════════════════════════════════════════════
+   EDITABLE AFFORDANCES (screen only)
+   ═══════════════════════════════════════════════════════════════ */
+[contenteditable] {
+  outline: none; cursor: text;
+  border-radius: 0.8mm;
+  transition: background 0.12s, box-shadow 0.12s;
+}
+[contenteditable]:hover {
+  background: rgba(66, 133, 244, 0.07) !important;
+  box-shadow: 0 0 0 0.4mm rgba(66, 133, 244, 0.3);
+}
+[contenteditable]:focus {
+  background: rgba(66, 133, 244, 0.11) !important;
+  box-shadow: 0 0 0 0.5mm rgba(66, 133, 244, 0.55);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRINT
+   ═══════════════════════════════════════════════════════════════ */
+@media print {
+  @page { size: A4 portrait; margin: 0; }
+  body { background: white; }
+  .screen-toolbar, .card-remove { display: none !important; }
+  .sheet-stack { gap: 0; padding: 0; }
+  .page { box-shadow: none; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .theme-blue::before   { background: var(--blue)   !important; }
+  .theme-gold::before   { background: var(--gold)   !important; }
+  .theme-red::before    { background: var(--red)    !important; }
+  .theme-green::before  { background: var(--green)  !important; }
+  .theme-purple::before { background: var(--purple) !important; }
+  .theme-slate::before  { background: var(--slate)  !important; }
+
+  .health-cell, .health-half, .toolbar-card, .strip-card,
+  .spell-summary-card, .slot-badge, .phase1-number-card,
+  .phase1-ability-card, .training-group, .ability-card,
+  .generated-card, .template-card { background: var(--panel-2) !important; }
+  .feat-card-title, .card-title-band { background: var(--panel) !important; }
+  .cache-sheet { background: linear-gradient(180deg, #efefef, #dbdbdb) !important; }
+
+  [contenteditable]:hover, [contenteditable]:focus {
+    background: inherit !important; box-shadow: none !important;
+  }
+}
